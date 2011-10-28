@@ -35,11 +35,11 @@ public class Util {
 		 * ($SWITCH_TABLE$net$minecraft$Util$OS()[getPlatform().ordinal()]) {
 		 */
 		switch (Util.getPlatform().ordinal()) {
+		case 0:
 		case 1:
-		case 2:
 			workingDirectory = new File(userHome, '.' + applicationName + '/');
 			break;
-		case 3:
+		case 2:
 			String applicationData = System.getenv("APPDATA");
 			/*
 			 * OLD File workingDirectory;
@@ -51,7 +51,7 @@ public class Util {
 				workingDirectory = new File(userHome,
 						'.' + applicationName + '/');
 			break;
-		case 4:
+		case 3:
 			workingDirectory = new File(userHome,
 					"Library/Application Support/" + applicationName);
 			break;
