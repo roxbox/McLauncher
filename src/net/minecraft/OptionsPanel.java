@@ -23,94 +23,94 @@ import javax.swing.border.EmptyBorder;
 
 public class OptionsPanel extends JDialog
 {
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public OptionsPanel(Frame parent)
-  {
-    super(parent);
+	public OptionsPanel(Frame parent)
+	{
+		super(parent);
 
-    setModal(true);
+		setModal(true);
 
-    JPanel panel = new JPanel(new BorderLayout());
-    JLabel label = new JLabel("Launcher options", 0);
-    label.setBorder(new EmptyBorder(0, 0, 16, 0));
-    label.setFont(new Font("Default", 1, 16));
-    panel.add(label, "North");
+		JPanel panel = new JPanel(new BorderLayout());
+		JLabel label = new JLabel("Launcher options", 0);
+		label.setBorder(new EmptyBorder(0, 0, 16, 0));
+		label.setFont(new Font("Default", 1, 16));
+		panel.add(label, "North");
 
-    JPanel optionsPanel = new JPanel(new BorderLayout());
-    JPanel labelPanel = new JPanel(new GridLayout(0, 1));
-    JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
-    optionsPanel.add(labelPanel, "West");
-    optionsPanel.add(fieldPanel, "Center");
+		JPanel optionsPanel = new JPanel(new BorderLayout());
+		JPanel labelPanel = new JPanel(new GridLayout(0, 1));
+		JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
+		optionsPanel.add(labelPanel, "West");
+		optionsPanel.add(fieldPanel, "Center");
 
-    JButton forceButton = new JButton("Force update!");
-    forceButton.addActionListener(new ActionListener(forceButton) {
-      public void actionPerformed(ActionEvent ae) {
-        GameUpdater.forceUpdate = true;
-        this.val$forceButton.setText("Will force!");
-        this.val$forceButton.setEnabled(false);
-      }
-    });
-    labelPanel.add(new JLabel("Force game update: ", 4));
-    fieldPanel.add(forceButton);
+		JButton forceButton = new JButton("Force update!");
+		forceButton.addActionListener(new ActionListener(forceButton) {
+			public void actionPerformed(ActionEvent ae) {
+				GameUpdater.forceUpdate = true;
+				this.val$forceButton.setText("Will force!");
+				this.val$forceButton.setEnabled(false);
+			}
+		});
+		labelPanel.add(new JLabel("Force game update: ", 4));
+		fieldPanel.add(forceButton);
 
-    labelPanel.add(new JLabel("Game location on disk: ", 4));
-    TransparentLabel dirLink = new TransparentLabel(Util.getWorkingDirectory().toString()) {
-      private static final long serialVersionUID = 0L;
+		labelPanel.add(new JLabel("Game location on disk: ", 4));
+		TransparentLabel dirLink = new TransparentLabel(Util.getWorkingDirectory().toString()) {
+			private static final long serialVersionUID = 0L;
 
-      public void paint(Graphics g) { super.paint(g);
+			public void paint(Graphics g) { super.paint(g);
 
-        int x = 0;
-        int y = 0;
+			int x = 0;
+			int y = 0;
 
-        FontMetrics fm = g.getFontMetrics();
-        int width = fm.stringWidth(getText());
-        int height = fm.getHeight();
+			FontMetrics fm = g.getFontMetrics();
+			int width = fm.stringWidth(getText());
+			int height = fm.getHeight();
 
-        if (getAlignmentX() == 2.0F) x = 0;
-        else if (getAlignmentX() == 0.0F) x = getBounds().width / 2 - width / 2;
-        else if (getAlignmentX() == 4.0F) x = getBounds().width - width;
-        y = getBounds().height / 2 + height / 2 - 1;
+			if (getAlignmentX() == 2.0F) x = 0;
+			else if (getAlignmentX() == 0.0F) x = getBounds().width / 2 - width / 2;
+			else if (getAlignmentX() == 4.0F) x = getBounds().width - width;
+			y = getBounds().height / 2 + height / 2 - 1;
 
-        g.drawLine(x + 2, y, x + width - 2, y); }
+			g.drawLine(x + 2, y, x + width - 2, y); }
 
-      public void update(Graphics g)
-      {
-        paint(g);
-      }
-    };
-    dirLink.setCursor(Cursor.getPredefinedCursor(12));
-    dirLink.addMouseListener(new MouseAdapter() {
-      public void mousePressed(MouseEvent arg0) {
-        try {
-          Util.openLink(new URL("file://" + Util.getWorkingDirectory().getAbsolutePath()).toURI());
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
-    dirLink.setForeground(new Color(2105599));
+			public void update(Graphics g)
+			{
+				paint(g);
+			}
+		};
+		dirLink.setCursor(Cursor.getPredefinedCursor(12));
+		dirLink.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent arg0) {
+				try {
+					Util.openLink(new URL("file://" + Util.getWorkingDirectory().getAbsolutePath()).toURI());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		dirLink.setForeground(new Color(2105599));
 
-    fieldPanel.add(dirLink);
+		fieldPanel.add(dirLink);
 
-    panel.add(optionsPanel, "Center");
+		panel.add(optionsPanel, "Center");
 
-    JPanel buttonsPanel = new JPanel(new BorderLayout());
-    buttonsPanel.add(new JPanel(), "Center");
-    JButton doneButton = new JButton("Done");
-    doneButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {
-        OptionsPanel.this.setVisible(false);
-      }
-    });
-    buttonsPanel.add(doneButton, "East");
-    buttonsPanel.setBorder(new EmptyBorder(16, 0, 0, 0));
+		JPanel buttonsPanel = new JPanel(new BorderLayout());
+		buttonsPanel.add(new JPanel(), "Center");
+		JButton doneButton = new JButton("Done");
+		doneButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				OptionsPanel.this.setVisible(false);
+			}
+		});
+		buttonsPanel.add(doneButton, "East");
+		buttonsPanel.setBorder(new EmptyBorder(16, 0, 0, 0));
 
-    panel.add(buttonsPanel, "South");
+		panel.add(buttonsPanel, "South");
 
-    add(panel);
-    panel.setBorder(new EmptyBorder(16, 24, 24, 24));
-    pack();
-    setLocationRelativeTo(parent);
-  }
+		add(panel);
+		panel.setBorder(new EmptyBorder(16, 24, 24, 24));
+		pack();
+		setLocationRelativeTo(parent);
+	}
 }

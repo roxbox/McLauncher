@@ -4,14 +4,14 @@ import javax.swing.JButton;
 
 public class TransparentButton extends JButton
 {
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  public TransparentButton(String string)
-  {
-    super(string);
-  }
+	public TransparentButton(String string)
+	{
+		super(string);
+	}
 
-  public boolean isOpaque() {
-    return false;
-  }
+	public boolean isOpaque() {
+		return false;
+	}
 }
