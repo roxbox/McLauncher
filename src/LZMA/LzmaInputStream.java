@@ -4,8 +4,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LzmaInputStream extends FilterInputStream
-{
+public class LzmaInputStream extends FilterInputStream {
 	boolean isClosed;
 	CRangeDecoder RangeDecoder;
 	byte[] dictionary;
@@ -53,9 +52,7 @@ public class LzmaInputStream extends FilterInputStream
 	static final int RepLenCoder = 1332;
 	static final int Literal = 1846;
 
-	public LzmaInputStream(InputStream paramInputStream)
-			throws IOException
-			{
+	public LzmaInputStream(InputStream paramInputStream) throws IOException {
 		super(paramInputStream);
 
 		this.isClosed = false;
@@ -63,10 +60,9 @@ public class LzmaInputStream extends FilterInputStream
 		readHeader();
 
 		fill_buffer();
-			}
+	}
 
-	private void LzmaDecode(int paramInt) throws IOException
-	{
+	private void LzmaDecode(int paramInt) throws IOException {
 		int j = (1 << this.pb) - 1;
 		int k = (1 << this.lp) - 1;
 
@@ -79,7 +75,9 @@ public class LzmaInputStream extends FilterInputStream
 			m = this.dictionaryPos - this.rep0;
 			if (m < 0)
 				m += this.dictionarySize;
-			byte tmp103_102 = this.dictionary[m]; this.dictionary[this.dictionaryPos] = tmp103_102; this.uncompressed_buffer[(this.uncompressed_size++)] = tmp103_102;
+			byte tmp103_102 = this.dictionary[m];
+			this.dictionary[this.dictionaryPos] = tmp103_102;
+			this.uncompressed_buffer[(this.uncompressed_size++)] = tmp103_102;
 			if (++this.dictionaryPos == this.dictionarySize)
 				this.dictionaryPos = 0;
 			this.RemainLen -= 1;
@@ -94,7 +92,8 @@ public class LzmaInputStream extends FilterInputStream
 			m = this.uncompressed_size + this.GlobalPos & j;
 			int n;
 			int i1;
-			if (this.RangeDecoder.BitDecode(this.probs, 0 + (this.State << 4) + m) == 0) {
+			if (this.RangeDecoder.BitDecode(this.probs, 0 + (this.State << 4)
+					+ m) == 0) {
 				n = 1846 + 768 * (((this.uncompressed_size + this.GlobalPos & k) << this.lc) + ((i & 0xFF) >> 8 - this.lc));
 
 				if (this.State < 4)
@@ -109,7 +108,8 @@ public class LzmaInputStream extends FilterInputStream
 						i1 += this.dictionarySize;
 					byte b = this.dictionary[i1];
 
-					i = this.RangeDecoder.LzmaLiteralDecodeMatch(this.probs, n, b);
+					i = this.RangeDecoder.LzmaLiteralDecodeMatch(this.probs, n,
+							b);
 					this.PreviousIsMatch = false;
 				} else {
 					i = this.RangeDecoder.LzmaLiteralDecode(this.probs, n);
@@ -120,13 +120,13 @@ public class LzmaInputStream extends FilterInputStream
 				this.dictionary[this.dictionaryPos] = i;
 				if (++this.dictionaryPos == this.dictionarySize)
 					this.dictionaryPos = 0;
-			}
-			else {
+			} else {
 				this.PreviousIsMatch = true;
 				if (this.RangeDecoder.BitDecode(this.probs, 192 + this.State) == 1) {
-					if (this.RangeDecoder.BitDecode(this.probs, 204 + this.State) == 0) {
-						if (this.RangeDecoder.BitDecode(this.probs, 240 + (this.State << 4) + m) == 0)
-						{
+					if (this.RangeDecoder.BitDecode(this.probs,
+							204 + this.State) == 0) {
+						if (this.RangeDecoder.BitDecode(this.probs, 240
+								+ (this.State << 4) + m) == 0) {
 							if (this.uncompressed_size + this.GlobalPos == 0) {
 								throw new LzmaException("LZMA : Data Error");
 							}
@@ -143,12 +143,13 @@ public class LzmaInputStream extends FilterInputStream
 							this.uncompressed_buffer[(this.uncompressed_size++)] = i;
 							continue;
 						}
-					}
-					else {
-						if (this.RangeDecoder.BitDecode(this.probs, 216 + this.State) == 0) {
+					} else {
+						if (this.RangeDecoder.BitDecode(this.probs,
+								216 + this.State) == 0) {
 							n = this.rep1;
 						} else {
-							if (this.RangeDecoder.BitDecode(this.probs, 228 + this.State) == 0) {
+							if (this.RangeDecoder.BitDecode(this.probs,
+									228 + this.State) == 0) {
 								n = this.rep2;
 							} else {
 								n = this.rep3;
@@ -159,43 +160,49 @@ public class LzmaInputStream extends FilterInputStream
 						this.rep1 = this.rep0;
 						this.rep0 = n;
 					}
-					this.RemainLen = this.RangeDecoder.LzmaLenDecode(this.probs, 1332, m);
+					this.RemainLen = this.RangeDecoder.LzmaLenDecode(
+							this.probs, 1332, m);
 					this.State = (this.State < 7 ? 8 : 11);
 				} else {
 					this.rep3 = this.rep2;
 					this.rep2 = this.rep1;
 					this.rep1 = this.rep0;
 					this.State = (this.State < 7 ? 7 : 10);
-					this.RemainLen = this.RangeDecoder.LzmaLenDecode(this.probs, 818, m);
-					n = this.RangeDecoder.BitTreeDecode(this.probs, 432 + ((this.RemainLen < 4 ? this.RemainLen : 3) << 6), 6);
+					this.RemainLen = this.RangeDecoder.LzmaLenDecode(
+							this.probs, 818, m);
+					n = this.RangeDecoder
+							.BitTreeDecode(this.probs,
+									432 + ((this.RemainLen < 4 ? this.RemainLen
+											: 3) << 6), 6);
 
 					if (n >= 4) {
 						i1 = (n >> 1) - 1;
 						this.rep0 = ((0x2 | n & 0x1) << i1);
 						if (n < 14) {
-							this.rep0 += this.RangeDecoder.ReverseBitTreeDecode(this.probs, 688 + this.rep0 - n - 1, i1);
-						}
-						else {
-							this.rep0 += (this.RangeDecoder.DecodeDirectBits(i1 - 4) << 4);
+							this.rep0 += this.RangeDecoder
+									.ReverseBitTreeDecode(this.probs, 688
+											+ this.rep0 - n - 1, i1);
+						} else {
+							this.rep0 += (this.RangeDecoder
+									.DecodeDirectBits(i1 - 4) << 4);
 
-							this.rep0 += this.RangeDecoder.ReverseBitTreeDecode(this.probs, 802, 4);
+							this.rep0 += this.RangeDecoder
+									.ReverseBitTreeDecode(this.probs, 802, 4);
 						}
 					} else {
 						this.rep0 = n;
-					}this.rep0 += 1;
+					}
+					this.rep0 += 1;
 				}
-				if (this.rep0 == 0)
-				{
+				if (this.rep0 == 0) {
 					this.RemainLen = -1;
 					break;
 				}
-				if (this.rep0 > this.uncompressed_size + this.GlobalPos)
-				{
+				if (this.rep0 > this.uncompressed_size + this.GlobalPos) {
 					throw new LzmaException("LZMA : Data Error");
 				}
 				this.RemainLen += 2;
-				do
-				{
+				do {
 					n = this.dictionaryPos - this.rep0;
 					if (n < 0)
 						n += this.dictionarySize;
@@ -206,7 +213,8 @@ public class LzmaInputStream extends FilterInputStream
 					}
 					this.uncompressed_buffer[(this.uncompressed_size++)] = i;
 					this.RemainLen -= 1;
-				}while ((this.RemainLen > 0) && (this.uncompressed_size < paramInt));
+				} while ((this.RemainLen > 0)
+						&& (this.uncompressed_size < paramInt));
 			}
 		}
 
@@ -221,7 +229,7 @@ public class LzmaInputStream extends FilterInputStream
 			if (l > 65536L)
 				i = 65536;
 			else {
-				i = (int)l;
+				i = (int) l;
 			}
 			LzmaDecode(i);
 
@@ -232,8 +240,7 @@ public class LzmaInputStream extends FilterInputStream
 		}
 	}
 
-	private void readHeader() throws IOException
-	{
+	private void readHeader() throws IOException {
 		byte[] arrayOfByte = new byte[5];
 
 		if (5 != this.in.read(arrayOfByte)) {
@@ -247,16 +254,19 @@ public class LzmaInputStream extends FilterInputStream
 			this.GlobalOutSize += (j << i * 8);
 		}
 
-		if (this.GlobalOutSize == -1L) this.GlobalOutSize = 9223372036854775807L;
+		if (this.GlobalOutSize == -1L)
+			this.GlobalOutSize = 9223372036854775807L;
 
 		int i = arrayOfByte[0] & 0xFF;
 		if (i >= 225) {
 			throw new LzmaException("LZMA header corrupted : Properties error");
 		}
 
-		for (this.pb = 0; i >= 45; i -= 45) this.pb += 1;
+		for (this.pb = 0; i >= 45; i -= 45)
+			this.pb += 1;
 
-		for (this.lp = 0; i >= 9; i -= 9) this.lp += 1;
+		for (this.lp = 0; i >= 9; i -= 9)
+			this.lp += 1;
 
 		this.lc = i;
 
@@ -292,11 +302,13 @@ public class LzmaInputStream extends FilterInputStream
 		this.GlobalNowPos = 0L;
 	}
 
-	public int read(byte[] paramArrayOfByte, int paramInt1, int paramInt2) throws IOException {
+	public int read(byte[] paramArrayOfByte, int paramInt1, int paramInt2)
+			throws IOException {
 		if (this.isClosed) {
 			throw new IOException("stream closed");
 		}
-		if ((paramInt1 | paramInt2 | paramInt1 + paramInt2 | paramArrayOfByte.length - (paramInt1 + paramInt2)) < 0) {
+		if ((paramInt1 | paramInt2 | paramInt1 + paramInt2 | paramArrayOfByte.length
+				- (paramInt1 + paramInt2)) < 0) {
 			throw new IndexOutOfBoundsException();
 		}
 		if (paramInt2 == 0) {
@@ -307,8 +319,10 @@ public class LzmaInputStream extends FilterInputStream
 		if (this.uncompressed_offset == this.uncompressed_size) {
 			return -1;
 		}
-		int i = Math.min(paramInt2, this.uncompressed_size - this.uncompressed_offset);
-		System.arraycopy(this.uncompressed_buffer, this.uncompressed_offset, paramArrayOfByte, paramInt1, i);
+		int i = Math.min(paramInt2, this.uncompressed_size
+				- this.uncompressed_offset);
+		System.arraycopy(this.uncompressed_buffer, this.uncompressed_offset,
+				paramArrayOfByte, paramInt1, i);
 		this.uncompressed_offset += i;
 		return i;
 	}

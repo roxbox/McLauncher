@@ -3,8 +3,7 @@ package LZMA;
 import java.io.IOException;
 import java.io.InputStream;
 
-class CRangeDecoder
-{
+class CRangeDecoder {
 	static final int kNumTopBits = 24;
 	static final int kTopValue = 16777216;
 	static final int kTopValueMask = -16777216;
@@ -32,16 +31,14 @@ class CRangeDecoder
 	static final int LenHigh = 258;
 	static final int kNumLenProbs = 514;
 
-	CRangeDecoder(InputStream paramInputStream)
-			throws IOException
-			{
+	CRangeDecoder(InputStream paramInputStream) throws IOException {
 		this.buffer = new byte[16384];
 		this.inStream = paramInputStream;
 		this.Code = 0;
 		this.Range = -1;
 		for (int i = 0; i < 5; i++)
 			this.Code = (this.Code << 8 | Readbyte());
-			}
+	}
 
 	int Readbyte() throws IOException {
 		if (this.buffer_size == this.buffer_ind) {
@@ -73,8 +70,7 @@ class CRangeDecoder
 
 	int BitDecode(int[] paramArrayOfInt, int paramInt) throws IOException {
 		int i = (this.Range >>> 11) * paramArrayOfInt[paramInt];
-		if ((this.Code & 0xFFFFFFFF) < (i & 0xFFFFFFFF))
-		{
+		if ((this.Code & 0xFFFFFFFF) < (i & 0xFFFFFFFF)) {
 			this.Range = i;
 			paramArrayOfInt[paramInt] += (2048 - paramArrayOfInt[paramInt] >>> 5);
 
@@ -95,8 +91,8 @@ class CRangeDecoder
 		return 1;
 	}
 
-	int BitTreeDecode(int[] paramArrayOfInt, int paramInt1, int paramInt2) throws IOException
-	{
+	int BitTreeDecode(int[] paramArrayOfInt, int paramInt1, int paramInt2)
+			throws IOException {
 		int i = 1;
 		for (int j = paramInt2; j > 0; j--) {
 			i = i + i + BitDecode(paramArrayOfInt, paramInt1 + i);
@@ -104,7 +100,8 @@ class CRangeDecoder
 		return i - (1 << paramInt2);
 	}
 
-	int ReverseBitTreeDecode(int[] paramArrayOfInt, int paramInt1, int paramInt2) throws IOException {
+	int ReverseBitTreeDecode(int[] paramArrayOfInt, int paramInt1, int paramInt2)
+			throws IOException {
 		int i = 1;
 		int j = 0;
 
@@ -116,45 +113,47 @@ class CRangeDecoder
 		return j;
 	}
 
-	byte LzmaLiteralDecode(int[] paramArrayOfInt, int paramInt) throws IOException {
+	byte LzmaLiteralDecode(int[] paramArrayOfInt, int paramInt)
+			throws IOException {
 		int i = 1;
 		do
 			i = i + i | BitDecode(paramArrayOfInt, paramInt + i);
 		while (i < 256);
 
-		return (byte)i;
+		return (byte) i;
 	}
 
-	byte LzmaLiteralDecodeMatch(int[] paramArrayOfInt, int paramInt, byte paramByte) throws IOException {
+	byte LzmaLiteralDecodeMatch(int[] paramArrayOfInt, int paramInt,
+			byte paramByte) throws IOException {
 		int i = 1;
 		do {
 			int j = paramByte >> 7 & 0x1;
-		paramByte = (byte)(paramByte << 1);
-		int k = BitDecode(paramArrayOfInt, paramInt + (1 + j << 8) + i);
-		i = i << 1 | k;
+			paramByte = (byte) (paramByte << 1);
+			int k = BitDecode(paramArrayOfInt, paramInt + (1 + j << 8) + i);
+			i = i << 1 | k;
 
-		if (j != k) {
-			while (i < 256) {
-				i = i + i | BitDecode(paramArrayOfInt, paramInt + i);
+			if (j != k) {
+				while (i < 256) {
+					i = i + i | BitDecode(paramArrayOfInt, paramInt + i);
+				}
 			}
-		}
-		}
-		while (i < 256);
+		} while (i < 256);
 
-		return (byte)i;
+		return (byte) i;
 	}
 
 	int LzmaLenDecode(int[] paramArrayOfInt, int paramInt1, int paramInt2)
-			throws IOException
-			{
+			throws IOException {
 		if (BitDecode(paramArrayOfInt, paramInt1 + 0) == 0) {
-			return BitTreeDecode(paramArrayOfInt, paramInt1 + 2 + (paramInt2 << 3), 3);
+			return BitTreeDecode(paramArrayOfInt, paramInt1 + 2
+					+ (paramInt2 << 3), 3);
 		}
 
 		if (BitDecode(paramArrayOfInt, paramInt1 + 1) == 0) {
-			return 8 + BitTreeDecode(paramArrayOfInt, paramInt1 + 130 + (paramInt2 << 3), 3);
+			return 8 + BitTreeDecode(paramArrayOfInt, paramInt1 + 130
+					+ (paramInt2 << 3), 3);
 		}
 
 		return 16 + BitTreeDecode(paramArrayOfInt, paramInt1 + 258, 8);
-			}
+	}
 }
