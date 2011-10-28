@@ -602,12 +602,15 @@ public class GameUpdater implements Runnable {
 			return;
 		FileInputStream fileInputHandle = new FileInputStream(f);
 
+		/* OLD
 		Class clazz = Class.forName("LZMA.LzmaInputStream");
 		Constructor constructor = clazz
 				.getDeclaredConstructor(new Class[] { InputStream.class });
 
 		InputStream inputHandle = (InputStream) constructor
 				.newInstance(new Object[] { fileInputHandle });
+		*/
+		InputStream inputHandle = new LZMA.LzmaInputStream(fileInputHandle);
 
 		OutputStream outputHandle = new FileOutputStream(out);
 
