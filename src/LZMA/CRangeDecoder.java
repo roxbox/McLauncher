@@ -1,6 +1,5 @@
 package LZMA;
 
-import ZMA.CRangeDecode;
 import java.io.IOException;
 import java.io.InputStream;
 
