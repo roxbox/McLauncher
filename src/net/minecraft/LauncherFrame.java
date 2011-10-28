@@ -17,16 +17,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-public class LauncherFrame extends Frame
-{
+public class LauncherFrame extends Frame {
 	public static final int VERSION = 13;
 	private static final long serialVersionUID = 1L;
 	public Map<String, String> customParameters = new HashMap();
 	public Launcher launcher;
 	public LoginForm loginForm;
 
-	public LauncherFrame()
-	{
+	public LauncherFrame() {
 		super("Minecraft Launcher");
 
 		setBackground(Color.BLACK);
@@ -42,9 +40,9 @@ public class LauncherFrame extends Frame
 
 		pack();
 		setLocationRelativeTo(null);
-		try
-		{
-			setIconImage(ImageIO.read(LauncherFrame.class.getResource("favicon.png")));
+		try {
+			setIconImage(ImageIO.read(LauncherFrame.class
+					.getResource("favicon.png")));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -61,14 +59,14 @@ public class LauncherFrame extends Frame
 						System.out.println("FORCING EXIT!");
 						System.exit(0);
 					}
-				}
-				.start();
+				}.start();
 				if (LauncherFrame.this.launcher != null) {
 					LauncherFrame.this.launcher.stop();
 					LauncherFrame.this.launcher.destroy();
 				}
 				System.exit(0);
-			} } );
+			}
+		});
 	}
 
 	public void playCached(String userName) {
@@ -94,8 +92,11 @@ public class LauncherFrame extends Frame
 
 	public void login(String userName, String password) {
 		try {
-			String parameters = "user=" + URLEncoder.encode(userName, "UTF-8") + "&password=" + URLEncoder.encode(password, "UTF-8") + "&version=" + 13;
-			String result = Util.excutePost("https://login.minecraft.net/", parameters);
+			String parameters = "user=" + URLEncoder.encode(userName, "UTF-8")
+					+ "&password=" + URLEncoder.encode(password, "UTF-8")
+					+ "&version=" + 13;
+			String result = Util.excutePost("https://login.minecraft.net/",
+					parameters);
 			if (result == null) {
 				showError("Can't connect to minecraft.net");
 				this.loginForm.setNoNetwork();
@@ -118,8 +119,10 @@ public class LauncherFrame extends Frame
 			this.launcher = new Launcher();
 			this.launcher.customParameters.putAll(this.customParameters);
 			this.launcher.customParameters.put("userName", values[2].trim());
-			this.launcher.customParameters.put("latestVersion", values[0].trim());
-			this.launcher.customParameters.put("downloadTicket", values[1].trim());
+			this.launcher.customParameters.put("latestVersion",
+					values[0].trim());
+			this.launcher.customParameters.put("downloadTicket",
+					values[1].trim());
 			this.launcher.customParameters.put("sessionId", values[3].trim());
 			this.launcher.init();
 
@@ -154,8 +157,7 @@ public class LauncherFrame extends Frame
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception localException) {
+		} catch (Exception localException) {
 		}
 		LauncherFrame launcherFrame = new LauncherFrame();
 		launcherFrame.setVisible(true);

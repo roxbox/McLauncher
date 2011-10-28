@@ -8,17 +8,15 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class LogoPanel extends JPanel
-{
+public class LogoPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Image bgImage;
 
-	public LogoPanel()
-	{
+	public LogoPanel() {
 		setOpaque(true);
-		try
-		{
-			BufferedImage src = ImageIO.read(LoginForm.class.getResource("logo.png"));
+		try {
+			BufferedImage src = ImageIO.read(LoginForm.class
+					.getResource("logo.png"));
 			int w = src.getWidth();
 			int h = src.getHeight();
 			this.bgImage = src.getScaledInstance(w, h, 16);

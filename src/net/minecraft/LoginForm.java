@@ -40,26 +40,26 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.event.HyperlinkListener;
 
-public class LoginForm extends TransparentPanel
-{
+public class LoginForm extends TransparentPanel {
 	private static final int PANEL_SIZE = 100;
 	private static final long serialVersionUID = 1L;
 	private static final Color LINK_COLOR = new Color(8421631);
 
 	public JTextField userName = new JTextField(20);
 	public JPasswordField password = new JPasswordField(20);
-	private TransparentCheckbox rememberBox = new TransparentCheckbox("Remember password");
+	private TransparentCheckbox rememberBox = new TransparentCheckbox(
+			"Remember password");
 	private TransparentButton launchButton = new TransparentButton("Login");
 	private TransparentButton optionsButton = new TransparentButton("Options");
 	private TransparentButton retryButton = new TransparentButton("Try again");
-	private TransparentButton offlineButton = new TransparentButton("Play offline");
+	private TransparentButton offlineButton = new TransparentButton(
+			"Play offline");
 	private TransparentLabel errorLabel = new TransparentLabel("", 0);
 	private LauncherFrame launcherFrame;
 	private boolean outdated = false;
 	private JScrollPane scrollPane;
 
-	public LoginForm(LauncherFrame launcherFrame)
-	{
+	public LoginForm(LauncherFrame launcherFrame) {
 		this.launcherFrame = launcherFrame;
 
 		BorderLayout gbl = new BorderLayout();
@@ -81,22 +81,56 @@ public class LoginForm extends TransparentPanel
 			public void actionPerformed(ActionEvent ae) {
 				LoginForm.this.errorLabel.setText("");
 				LoginForm.this.removeAll();
-				LoginForm.this.add(LoginForm.this.buildMainLoginPanel(), "Center");
+				LoginForm.this.add(LoginForm.this.buildMainLoginPanel(),
+						"Center");
 				LoginForm.this.validate();
 			}
 		});
-		this.offlineButton.addActionListener(new ActionListener(launcherFrame) {
-			public void actionPerformed(ActionEvent ae) {
-				this.val$launcherFrame.playCached(LoginForm.this.userName.getText());
+		/*
+		 * OLD this.offlineButton.addActionListener(new
+		 * ActionListener(launcherFrame) { public void
+		 * actionPerformed(ActionEvent ae) {
+		 * this.val$launcherFrame.playCached(LoginForm.this.userName.getText());
+		 * } });
+		 */
+		/* NEW */
+		class OfflineButtonListener implements ActionListener {
+			private LauncherFrame launcherFrame;
+
+			public OfflineButtonListener(LauncherFrame launcherFrame) {
+				this.launcherFrame = launcherFrame;
 			}
-		});
+
+			public void actionPerformed(ActionEvent ae) {
+				launcherFrame.playCached(LoginForm.this.userName.getText());
+			}
+		}
+
+		class OptionsButtonListener implements ActionListener {
+			private LauncherFrame launcherFrame;
+
+			public OptionsButtonListener(LauncherFrame launcherFrame) {
+				this.launcherFrame = launcherFrame;
+			}
+
+			public void actionPerformed(ActionEvent ae) {
+				new OptionsPanel(launcherFrame).setVisible(true);
+			}
+		}
+		/* ENDNEW */
+
+		this.offlineButton.addActionListener(new OfflineButtonListener(
+				launcherFrame));
 		this.launchButton.addActionListener(al);
 
-		this.optionsButton.addActionListener(new ActionListener(launcherFrame) {
-			public void actionPerformed(ActionEvent ae) {
-				new OptionsPanel(this.val$launcherFrame).setVisible(true);
-			}
-		});
+		/*
+		 * OLD this.optionsButton.addActionListener(new
+		 * ActionListener(launcherFrame) { public void
+		 * actionPerformed(ActionEvent ae) { new
+		 * OptionsPanel(this.val$launcherFrame).setVisible(true); } });
+		 */
+		this.optionsButton.addActionListener(new OptionsButtonListener(
+				launcherFrame));
 	}
 
 	public void doLogin() {
@@ -104,13 +138,14 @@ public class LoginForm extends TransparentPanel
 		new Thread() {
 			public void run() {
 				try {
-					LoginForm.this.launcherFrame.login(LoginForm.this.userName.getText(), new String(LoginForm.this.password.getPassword()));
+					LoginForm.this.launcherFrame.login(LoginForm.this.userName
+							.getText(),
+							new String(LoginForm.this.password.getPassword()));
 				} catch (Exception e) {
 					LoginForm.this.setError(e.toString());
 				}
 			}
-		}
-		.start();
+		}.start();
 	}
 
 	private void readUsername() {
@@ -119,15 +154,16 @@ public class LoginForm extends TransparentPanel
 
 			Cipher cipher = getCipher(2, "passwordfile");
 			DataInputStream dis;
-			DataInputStream dis;
 			if (cipher != null)
-				dis = new DataInputStream(new CipherInputStream(new FileInputStream(lastLogin), cipher));
+				dis = new DataInputStream(new CipherInputStream(
+						new FileInputStream(lastLogin), cipher));
 			else {
 				dis = new DataInputStream(new FileInputStream(lastLogin));
 			}
 			this.userName.setText(dis.readUTF());
 			this.password.setText(dis.readUTF());
-			this.rememberBox.setSelected(this.password.getPassword().length > 0);
+			this.rememberBox
+					.setSelected(this.password.getPassword().length > 0);
 			dis.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,14 +176,15 @@ public class LoginForm extends TransparentPanel
 
 			Cipher cipher = getCipher(1, "passwordfile");
 			DataOutputStream dos;
-			DataOutputStream dos;
 			if (cipher != null)
-				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin), cipher));
+				dos = new DataOutputStream(new CipherOutputStream(
+						new FileOutputStream(lastLogin), cipher));
 			else {
 				dos = new DataOutputStream(new FileOutputStream(lastLogin));
 			}
 			dos.writeUTF(this.userName.getText());
-			dos.writeUTF(this.rememberBox.isSelected() ? new String(this.password.getPassword()) : "");
+			dos.writeUTF(this.rememberBox.isSelected() ? new String(
+					this.password.getPassword()) : "");
 			dos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,22 +197,22 @@ public class LoginForm extends TransparentPanel
 		random.nextBytes(salt);
 		PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
 
-		SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec(password.toCharArray()));
+		SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES")
+				.generateSecret(new PBEKeySpec(password.toCharArray()));
 		Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
 		cipher.init(mode, pbeKey, pbeParamSpec);
 		return cipher;
 	}
 
-	private JScrollPane getUpdateNews()
-	{
-		if (this.scrollPane != null) return this.scrollPane;
-		try
-		{
-			JTextPane editorPane = new JTextPane()
-			{
+	private JScrollPane getUpdateNews() {
+		if (this.scrollPane != null)
+			return this.scrollPane;
+		try {
+			JTextPane editorPane = new JTextPane() {
 				private static final long serialVersionUID = 1L;
 			};
-			editorPane.setText("<html><body><font color=\"#808080\"><br><br><br><br><br><br><br><center>Loading update news..</center></font></body></html>");
+			editorPane
+					.setText("<html><body><font color=\"#808080\"><br><br><br><br><br><br><br><center>Loading update news..</center></font></body></html>");
 			editorPane.addHyperlinkListener(new HyperlinkListener() {
 				public void hyperlinkUpdate(HyperlinkEvent he) {
 					if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
@@ -186,17 +223,41 @@ public class LoginForm extends TransparentPanel
 						}
 				}
 			});
-			new Thread(editorPane) {
+
+			/* NEW */
+			class UpdateThread extends Thread {
+				private JTextPane editorPane;
+
+				public UpdateThread(JTextPane editorPane) {
+					super();
+					this.editorPane = editorPane;
+				}
+
 				public void run() {
 					try {
-						this.val$editorPane.setPage(new URL("http://mcupdate.tumblr.com/"));
+						editorPane.setPage(new URL(
+								"http://mcupdate.tumblr.com/"));
 					} catch (Exception e) {
 						e.printStackTrace();
-						this.val$editorPane.setText("<html><body><font color=\"#808080\"><br><br><br><br><br><br><br><center>Failed to update news<br>" + e.toString() + "</center></font></body></html>");
+						editorPane
+								.setText("<html><body><font color=\"#808080\"><br><br><br><br><br><br><br><center>Failed to update news<br>"
+										+ e.toString()
+										+ "</center></font></body></html>");
 					}
 				}
 			}
-			.start();
+			/* ENDNEW */
+
+			/*
+			 * OLD new Thread(editorPane) { public void run() { try {
+			 * this.val$editorPane.setPage(new
+			 * URL("http://mcupdate.tumblr.com/")); } catch (Exception e) {
+			 * e.printStackTrace(); this.val$editorPane.setText(
+			 * "<html><body><font color=\"#808080\"><br><br><br><br><br><br><br><center>Failed to update news<br>"
+			 * + e.toString() + "</center></font></body></html>"); } } }
+			 * .start();
+			 */
+			new UpdateThread(editorPane).start();
 			editorPane.setBackground(Color.DARK_GRAY);
 			editorPane.setEditable(false);
 			this.scrollPane = new JScrollPane(editorPane);
@@ -264,35 +325,37 @@ public class LoginForm extends TransparentPanel
 
 		third.add(this.optionsButton);
 		third.add(this.launchButton);
-		try
-		{
+		try {
 			if (this.outdated) {
 				TransparentLabel accountLink = getUpdateLink();
 				third.add(accountLink);
-			}
-			else
-			{
-				TransparentLabel accountLink = new TransparentLabel("Need account?") {
+			} else {
+				TransparentLabel accountLink = new TransparentLabel(
+						"Need account?") {
 					private static final long serialVersionUID = 0L;
 
-					public void paint(Graphics g) { super.paint(g);
+					public void paint(Graphics g) {
+						super.paint(g);
 
-					int x = 0;
-					int y = 0;
+						int x = 0;
+						int y = 0;
 
-					FontMetrics fm = g.getFontMetrics();
-					int width = fm.stringWidth(getText());
-					int height = fm.getHeight();
+						FontMetrics fm = g.getFontMetrics();
+						int width = fm.stringWidth(getText());
+						int height = fm.getHeight();
 
-					if (getAlignmentX() == 2.0F) x = 0;
-					else if (getAlignmentX() == 0.0F) x = getBounds().width / 2 - width / 2;
-					else if (getAlignmentX() == 4.0F) x = getBounds().width - width;
-					y = getBounds().height / 2 + height / 2 - 1;
+						if (getAlignmentX() == 2.0F)
+							x = 0;
+						else if (getAlignmentX() == 0.0F)
+							x = getBounds().width / 2 - width / 2;
+						else if (getAlignmentX() == 4.0F)
+							x = getBounds().width - width;
+						y = getBounds().height / 2 + height / 2 - 1;
 
-					g.drawLine(x + 2, y, x + width - 2, y); }
+						g.drawLine(x + 2, y, x + width - 2, y);
+					}
 
-					public void update(Graphics g)
-					{
+					public void update(Graphics g) {
 						paint(g);
 					}
 				};
@@ -300,7 +363,9 @@ public class LoginForm extends TransparentPanel
 				accountLink.addMouseListener(new MouseAdapter() {
 					public void mousePressed(MouseEvent arg0) {
 						try {
-							Util.openLink(new URL("http://www.minecraft.net/register.jsp").toURI());
+							Util.openLink(new URL(
+									"http://www.minecraft.net/register.jsp")
+									.toURI());
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -310,9 +375,7 @@ public class LoginForm extends TransparentPanel
 				third.add(accountLink);
 			}
 
-		}
-		catch (Error localError)
-		{
+		} catch (Error localError) {
 		}
 
 		loginPanel.add(third, "Center");
@@ -327,27 +390,32 @@ public class LoginForm extends TransparentPanel
 	}
 
 	private TransparentLabel getUpdateLink() {
-		TransparentLabel accountLink = new TransparentLabel("You need to update the launcher!") {
+		TransparentLabel accountLink = new TransparentLabel(
+				"You need to update the launcher!") {
 			private static final long serialVersionUID = 0L;
 
-			public void paint(Graphics g) { super.paint(g);
+			public void paint(Graphics g) {
+				super.paint(g);
 
-			int x = 0;
-			int y = 0;
+				int x = 0;
+				int y = 0;
 
-			FontMetrics fm = g.getFontMetrics();
-			int width = fm.stringWidth(getText());
-			int height = fm.getHeight();
+				FontMetrics fm = g.getFontMetrics();
+				int width = fm.stringWidth(getText());
+				int height = fm.getHeight();
 
-			if (getAlignmentX() == 2.0F) x = 0;
-			else if (getAlignmentX() == 0.0F) x = getBounds().width / 2 - width / 2;
-			else if (getAlignmentX() == 4.0F) x = getBounds().width - width;
-			y = getBounds().height / 2 + height / 2 - 1;
+				if (getAlignmentX() == 2.0F)
+					x = 0;
+				else if (getAlignmentX() == 0.0F)
+					x = getBounds().width / 2 - width / 2;
+				else if (getAlignmentX() == 4.0F)
+					x = getBounds().width - width;
+				y = getBounds().height / 2 + height / 2 - 1;
 
-			g.drawLine(x + 2, y, x + width - 2, y); }
+				g.drawLine(x + 2, y, x + width - 2, y);
+			}
 
-			public void update(Graphics g)
-			{
+			public void update(Graphics g) {
 				paint(g);
 			}
 		};
@@ -355,7 +423,8 @@ public class LoginForm extends TransparentPanel
 		accountLink.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent arg0) {
 				try {
-					Util.openLink(new URL("http://www.minecraft.net/download.jsp").toURI());
+					Util.openLink(new URL(
+							"http://www.minecraft.net/download.jsp").toURI());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -386,8 +455,7 @@ public class LoginForm extends TransparentPanel
 		return tp;
 	}
 
-	private TransparentPanel buildOfflinePanel()
-	{
+	private TransparentPanel buildOfflinePanel() {
 		TransparentPanel panel = new TransparentPanel();
 		panel.setInsets(0, 0, 0, 20);
 
@@ -406,10 +474,12 @@ public class LoginForm extends TransparentPanel
 
 		loginPanel.add(pp, "East");
 
-		boolean canPlayOffline = this.launcherFrame.canPlayOffline(this.userName.getText());
+		boolean canPlayOffline = this.launcherFrame
+				.canPlayOffline(this.userName.getText());
 		this.offlineButton.setEnabled(canPlayOffline);
 		if (!canPlayOffline) {
-			loginPanel.add(new TransparentLabel("(Not downloaded)", 4), "South");
+			loginPanel
+					.add(new TransparentLabel("(Not downloaded)", 4), "South");
 		}
 		panel.add(loginPanel, "Center");
 
@@ -447,7 +517,8 @@ public class LoginForm extends TransparentPanel
 		southPanel.setLayout(new BorderLayout());
 		southPanel.add(new LogoPanel(), "West");
 		southPanel.add(new TransparentPanel(), "Center");
-		JLabel label = new TransparentLabel("Logging in...                      ", 0);
+		JLabel label = new TransparentLabel(
+				"Logging in...                      ", 0);
 		label.setFont(new Font(null, 1, 16));
 		southPanel.add(center(label), "East");
 		southPanel.setPreferredSize(new Dimension(100, 100));
@@ -466,11 +537,11 @@ public class LoginForm extends TransparentPanel
 
 	public void checkAutologin() {
 		if (this.password.getPassword().length > 0)
-			this.launcherFrame.login(this.userName.getText(), new String(this.password.getPassword()));
+			this.launcherFrame.login(this.userName.getText(), new String(
+					this.password.getPassword()));
 	}
 
-	public void setOutdated()
-	{
+	public void setOutdated() {
 		this.outdated = true;
 	}
 }

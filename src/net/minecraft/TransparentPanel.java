@@ -4,17 +4,14 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
-public class TransparentPanel extends JPanel
-{
+public class TransparentPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Insets insets;
 
-	public TransparentPanel()
-	{
+	public TransparentPanel() {
 	}
 
-	public TransparentPanel(LayoutManager layout)
-	{
+	public TransparentPanel(LayoutManager layout) {
 		setLayout(layout);
 	}
 
@@ -27,7 +24,8 @@ public class TransparentPanel extends JPanel
 	}
 
 	public Insets getInsets() {
-		if (this.insets == null) return super.getInsets();
+		if (this.insets == null)
+			return super.getInsets();
 		return this.insets;
 	}
 }

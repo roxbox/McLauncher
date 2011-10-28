@@ -21,12 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class OptionsPanel extends JDialog
-{
+public class OptionsPanel extends JDialog {
 	private static final long serialVersionUID = 1L;
 
-	public OptionsPanel(Frame parent)
-	{
+	public OptionsPanel(Frame parent) {
 		super(parent);
 
 		setModal(true);
@@ -44,38 +42,51 @@ public class OptionsPanel extends JDialog
 		optionsPanel.add(fieldPanel, "Center");
 
 		JButton forceButton = new JButton("Force update!");
-		forceButton.addActionListener(new ActionListener(forceButton) {
+		/*
+		 * OLD forceButton.addActionListener(new ActionListener(forceButton) {
+		 * public void actionPerformed(ActionEvent ae) { GameUpdater.forceUpdate
+		 * = true; this.val$forceButton.setText("Will force!");
+		 * this.val$forceButton.setEnabled(false); } });
+		 */
+		forceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
+				JButton forceButton;
 				GameUpdater.forceUpdate = true;
-				this.val$forceButton.setText("Will force!");
-				this.val$forceButton.setEnabled(false);
+				forceButton = (JButton) ae.getSource();
+				forceButton.setText("Will force!");
+				forceButton.setEnabled(false);
 			}
 		});
 		labelPanel.add(new JLabel("Force game update: ", 4));
 		fieldPanel.add(forceButton);
 
 		labelPanel.add(new JLabel("Game location on disk: ", 4));
-		TransparentLabel dirLink = new TransparentLabel(Util.getWorkingDirectory().toString()) {
+		TransparentLabel dirLink = new TransparentLabel(Util
+				.getWorkingDirectory().toString()) {
 			private static final long serialVersionUID = 0L;
 
-			public void paint(Graphics g) { super.paint(g);
+			public void paint(Graphics g) {
+				super.paint(g);
 
-			int x = 0;
-			int y = 0;
+				int x = 0;
+				int y = 0;
 
-			FontMetrics fm = g.getFontMetrics();
-			int width = fm.stringWidth(getText());
-			int height = fm.getHeight();
+				FontMetrics fm = g.getFontMetrics();
+				int width = fm.stringWidth(getText());
+				int height = fm.getHeight();
 
-			if (getAlignmentX() == 2.0F) x = 0;
-			else if (getAlignmentX() == 0.0F) x = getBounds().width / 2 - width / 2;
-			else if (getAlignmentX() == 4.0F) x = getBounds().width - width;
-			y = getBounds().height / 2 + height / 2 - 1;
+				if (getAlignmentX() == 2.0F)
+					x = 0;
+				else if (getAlignmentX() == 0.0F)
+					x = getBounds().width / 2 - width / 2;
+				else if (getAlignmentX() == 4.0F)
+					x = getBounds().width - width;
+				y = getBounds().height / 2 + height / 2 - 1;
 
-			g.drawLine(x + 2, y, x + width - 2, y); }
+				g.drawLine(x + 2, y, x + width - 2, y);
+			}
 
-			public void update(Graphics g)
-			{
+			public void update(Graphics g) {
 				paint(g);
 			}
 		};
@@ -83,7 +94,9 @@ public class OptionsPanel extends JDialog
 		dirLink.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent arg0) {
 				try {
-					Util.openLink(new URL("file://" + Util.getWorkingDirectory().getAbsolutePath()).toURI());
+					Util.openLink(new URL("file://"
+							+ Util.getWorkingDirectory().getAbsolutePath())
+							.toURI());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

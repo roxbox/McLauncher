@@ -6,21 +6,20 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 
-public class MinecraftLauncher
-{
+public class MinecraftLauncher {
 	private static final int MIN_HEAP = 511;
 	private static final int RECOMMENDED_HEAP = 1024;
 
-	public static void main(String[] args)
-			throws Exception
-			{
-		float heapSizeMegs = (float)(Runtime.getRuntime().maxMemory() / 1024L / 1024L);
+	public static void main(String[] args) throws Exception {
+		float heapSizeMegs = (float) (Runtime.getRuntime().maxMemory() / 1024L / 1024L);
 
 		if (heapSizeMegs > 511.0F)
 			LauncherFrame.main(args);
 		else
 			try {
-				String pathToJar = MinecraftLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+				String pathToJar = MinecraftLauncher.class
+						.getProtectionDomain().getCodeSource().getLocation()
+						.toURI().getPath();
 
 				ArrayList params = new ArrayList();
 
@@ -36,11 +35,12 @@ public class MinecraftLauncher
 				params.add("net.minecraft.LauncherFrame");
 				ProcessBuilder pb = new ProcessBuilder(params);
 				Process process = pb.start();
-				if (process == null) throw new Exception("!");
+				if (process == null)
+					throw new Exception("!");
 				System.exit(0);
 			} catch (Exception e) {
 				e.printStackTrace();
 				LauncherFrame.main(args);
 			}
-			}
+	}
 }

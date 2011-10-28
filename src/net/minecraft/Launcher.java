@@ -19,9 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
-public class Launcher extends Applet
-implements Runnable, AppletStub, MouseListener
-{
+public class Launcher extends Applet implements Runnable, AppletStub,
+		MouseListener {
 	private static final long serialVersionUID = 1L;
 	public Map<String, String> customParameters = new HashMap();
 	private GameUpdater gameUpdater;
@@ -33,24 +32,26 @@ implements Runnable, AppletStub, MouseListener
 	private boolean hasMouseListener = false;
 	private VolatileImage img;
 
-	public boolean isActive()
-	{
+	public boolean isActive() {
 		if (this.context == 0) {
 			this.context = -1;
 			try {
-				if (getAppletContext() != null) this.context = 1; 
-			}
-			catch (Exception localException) {
+				if (getAppletContext() != null)
+					this.context = 1;
+			} catch (Exception localException) {
 			}
 		}
-		if (this.context == -1) return this.active;
+		if (this.context == -1)
+			return this.active;
 		return super.isActive();
 	}
 
-	public void init(String userName, String latestVersion, String downloadTicket, String sessionId)
-	{
+	public void init(String userName, String latestVersion,
+			String downloadTicket, String sessionId) {
 		try {
-			this.bgImage = ImageIO.read(LoginForm.class.getResource("dirt.png")).getScaledInstance(32, 32, 16);
+			this.bgImage = ImageIO
+					.read(LoginForm.class.getResource("dirt.png"))
+					.getScaledInstance(32, 32, 16);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -58,7 +59,8 @@ implements Runnable, AppletStub, MouseListener
 		this.customParameters.put("username", userName);
 		this.customParameters.put("sessionid", sessionId);
 
-		this.gameUpdater = new GameUpdater(latestVersion, "minecraft.jar?user=" + userName + "&ticket=" + downloadTicket);
+		this.gameUpdater = new GameUpdater(latestVersion, "minecraft.jar?user="
+				+ userName + "&ticket=" + downloadTicket);
 	}
 
 	public boolean canPlayOffline() {
@@ -70,7 +72,8 @@ implements Runnable, AppletStub, MouseListener
 			this.applet.init();
 			return;
 		}
-		init(getParameter("userName"), getParameter("latestVersion"), getParameter("downloadTicket"), getParameter("sessionId"));
+		init(getParameter("userName"), getParameter("latestVersion"),
+				getParameter("downloadTicket"), getParameter("sessionId"));
 	}
 
 	public void start() {
@@ -78,17 +81,17 @@ implements Runnable, AppletStub, MouseListener
 			this.applet.start();
 			return;
 		}
-		if (this.gameUpdaterStarted) return;
+		if (this.gameUpdaterStarted)
+			return;
 
 		Thread t = new Thread() {
 			public void run() {
 				Launcher.this.gameUpdater.run();
 				try {
 					if (!Launcher.this.gameUpdater.fatalError)
-						Launcher.this.replace(Launcher.this.gameUpdater.createApplet());
-				}
-				catch (ClassNotFoundException e)
-				{
+						Launcher.this.replace(Launcher.this.gameUpdater
+								.createApplet());
+				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (InstantiationException e) {
 					e.printStackTrace();
@@ -147,17 +150,18 @@ implements Runnable, AppletStub, MouseListener
 		validate();
 	}
 
-	public void update(Graphics g)
-	{
+	public void update(Graphics g) {
 		paint(g);
 	}
 
 	public void paint(Graphics g2) {
-		if (this.applet != null) return;
+		if (this.applet != null)
+			return;
 
 		int w = getWidth() / 2;
 		int h = getHeight() / 2;
-		if ((this.img == null) || (this.img.getWidth() != w) || (this.img.getHeight() != h)) {
+		if ((this.img == null) || (this.img.getWidth() != w)
+				|| (this.img.getHeight() != h)) {
 			this.img = createVolatileImage(w, h);
 		}
 
@@ -175,7 +179,8 @@ implements Runnable, AppletStub, MouseListener
 			String msg = "New update available";
 			g.setFont(new Font(null, 1, 20));
 			FontMetrics fm = g.getFontMetrics();
-			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2, h / 2 - fm.getHeight() * 2);
+			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2,
+					h / 2 - fm.getHeight() * 2);
 
 			g.setFont(new Font(null, 0, 12));
 			fm = g.getFontMetrics();
@@ -188,12 +193,12 @@ implements Runnable, AppletStub, MouseListener
 
 			g.setColor(Color.BLACK);
 			msg = "Yes";
-			g.drawString(msg, w / 2 - 56 - 8 - fm.stringWidth(msg) / 2 + 28, h / 2 + 14);
+			g.drawString(msg, w / 2 - 56 - 8 - fm.stringWidth(msg) / 2 + 28,
+					h / 2 + 14);
 			msg = "Not now";
-			g.drawString(msg, w / 2 + 8 - fm.stringWidth(msg) / 2 + 28, h / 2 + 14);
-		}
-		else
-		{
+			g.drawString(msg, w / 2 + 8 - fm.stringWidth(msg) / 2 + 28,
+					h / 2 + 14);
+		} else {
 			g.setColor(Color.LIGHT_GRAY);
 
 			String msg = "Updating Minecraft";
@@ -203,7 +208,8 @@ implements Runnable, AppletStub, MouseListener
 
 			g.setFont(new Font(null, 1, 20));
 			FontMetrics fm = g.getFontMetrics();
-			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2, h / 2 - fm.getHeight() * 2);
+			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2,
+					h / 2 - fm.getHeight() * 2);
 
 			g.setFont(new Font(null, 0, 12));
 			fm = g.getFontMetrics();
@@ -212,17 +218,21 @@ implements Runnable, AppletStub, MouseListener
 				msg = this.gameUpdater.fatalErrorDescription;
 			}
 
-			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2, h / 2 + fm.getHeight() * 1);
+			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2,
+					h / 2 + fm.getHeight() * 1);
 			msg = this.gameUpdater.subtaskMessage;
-			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2, h / 2 + fm.getHeight() * 2);
+			g.drawString(msg, w / 2 - fm.stringWidth(msg) / 2,
+					h / 2 + fm.getHeight() * 2);
 
 			if (!this.gameUpdater.fatalError) {
 				g.setColor(Color.black);
 				g.fillRect(64, h - 64, w - 128 + 1, 5);
 				g.setColor(new Color(32768));
-				g.fillRect(64, h - 64, this.gameUpdater.percentage * (w - 128) / 100, 4);
+				g.fillRect(64, h - 64, this.gameUpdater.percentage * (w - 128)
+						/ 100, 4);
 				g.setColor(new Color(2138144));
-				g.fillRect(65, h - 64 + 1, this.gameUpdater.percentage * (w - 128) / 100 - 2, 1);
+				g.fillRect(65, h - 64 + 1, this.gameUpdater.percentage
+						* (w - 128) / 100 - 2, 1);
 			}
 		}
 
@@ -235,17 +245,18 @@ implements Runnable, AppletStub, MouseListener
 	}
 
 	public String getParameter(String name) {
-		String custom = (String)this.customParameters.get(name);
-		if (custom != null) return custom; try
-		{
+		String custom = (String) this.customParameters.get(name);
+		if (custom != null)
+			return custom;
+		try {
 			return super.getParameter(name);
 		} catch (Exception e) {
 			this.customParameters.put(name, null);
-		}return null;
+		}
+		return null;
 	}
 
-	public void appletResize(int width, int height)
-	{
+	public void appletResize(int width, int height) {
 	}
 
 	public URL getDocumentBase() {
@@ -290,7 +301,6 @@ implements Runnable, AppletStub, MouseListener
 		return (x >= xx) && (y >= yy) && (x < xx + w) && (y < yy + h);
 	}
 
-	public void mouseReleased(MouseEvent arg0)
-	{
+	public void mouseReleased(MouseEvent arg0) {
 	}
 }

@@ -10,19 +10,22 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+/* NEW */
+import java.awt.geom.Point2D;
 
-public class TexturedPanel extends JPanel
-{
+/* ENDNEW */
+
+public class TexturedPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Image img;
 	private Image bgImage;
 
-	public TexturedPanel()
-	{
+	public TexturedPanel() {
 		setOpaque(true);
-		try
-		{
-			this.bgImage = ImageIO.read(LoginForm.class.getResource("dirt.png")).getScaledInstance(32, 32, 16);
+		try {
+			this.bgImage = ImageIO
+					.read(LoginForm.class.getResource("dirt.png"))
+					.getScaledInstance(32, 32, 16);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +38,8 @@ public class TexturedPanel extends JPanel
 	public void paintComponent(Graphics g2) {
 		int w = getWidth() / 2 + 1;
 		int h = getHeight() / 2 + 1;
-		if ((this.img == null) || (this.img.getWidth(null) != w) || (this.img.getHeight(null) != h)) {
+		if ((this.img == null) || (this.img.getWidth(null) != w)
+				|| (this.img.getHeight(null) != h)) {
 			this.img = createImage(w, h);
 
 			Graphics g = this.img.getGraphics();
@@ -44,13 +48,17 @@ public class TexturedPanel extends JPanel
 					g.drawImage(this.bgImage, x * 32, y * 32, null);
 			}
 			if ((g instanceof Graphics2D)) {
-				Graphics2D gg = (Graphics2D)g;
+				Graphics2D gg = (Graphics2D) g;
 				int gh = 1;
-				gg.setPaint(new GradientPaint(new Point2D.Float(0.0F, 0.0F), new Color(553648127, true), new Point2D.Float(0.0F, gh), new Color(0, true)));
+				gg.setPaint(new GradientPaint(new Point2D.Float(0.0F, 0.0F),
+						new Color(553648127, true),
+						new Point2D.Float(0.0F, gh), new Color(0, true)));
 				gg.fillRect(0, 0, w, gh);
 
 				gh = h;
-				gg.setPaint(new GradientPaint(new Point2D.Float(0.0F, 0.0F), new Color(0, true), new Point2D.Float(0.0F, gh), new Color(1610612736, true)));
+				gg.setPaint(new GradientPaint(new Point2D.Float(0.0F, 0.0F),
+						new Color(0, true), new Point2D.Float(0.0F, gh),
+						new Color(1610612736, true)));
 				gg.fillRect(0, 0, w, gh);
 			}
 			g.dispose();
